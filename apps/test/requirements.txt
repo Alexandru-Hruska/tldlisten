@@ -1,0 +1,7 @@
+gradio<6 #hosting requirement, todo check the docs
+llama-index-core
+llama-index-embeddings-openai
+llama-index-llms-openai
+python-dotenv
+modal
+fastapi
