@@ -4,7 +4,7 @@ import modal
 import os
 
 # Import the Gradio app
-from app_frontend import app as blocks
+from app import app as blocks
 
 # Create a Modal image with required dependencies
 image = modal.Image.debian_slim().pip_install(
@@ -13,15 +13,7 @@ image = modal.Image.debian_slim().pip_install(
     "llama-index-embeddings-openai",
     "llama-index-llms-openai",
     "python-dotenv",  # Environment variables
-)
-
-# Handle the podcast transcript file from a different directory
-# This will copy the file from ../data/test.txt to /root/data/test.txt in the container
-data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data"))
-image = image.add_local_dir(
-    local_dir=data_dir, 
-    remote_dir="/root/data"
-)
+).add_local_file("test.txt", "/root/test.txt") 
 
 # Define the Modal app
 app = modal.App("tldlisten", image=image)
@@ -40,8 +32,8 @@ def serve() -> FastAPI:
     - Wraps Gradio inside FastAPI
     - Deploys the API through Modal with a single instance for session consistency
     """
-    # Need to update the transcript path in the environment for the app
-    os.environ["TRANSCRIPT_PATH"] = "/root/data/raw/test.txt"
+    # Set the environment variable for the transcript path in the container
+    os.environ["TRANSCRIPT_PATH"] = "/root/test.txt"
     
     api = FastAPI(docs=True) # Enable Swagger documentation at /docs
     
@@ -59,5 +51,7 @@ def main():
     - Allows running the app locally for testing
     - Prints the type of Gradio app to confirm readiness
     """
+    # For local development, use the file in the current directory
+    os.environ["TRANSCRIPT_PATH"] = "test.txt"
     print(f"{type(blocks)} is ready to go!")
-    print(f"Using transcript from: {os.path.join(data_dir, 'test.txt')}")
+    print(f"Using transcript from: {os.path.abspath('test.txt')}")

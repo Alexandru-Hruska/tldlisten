@@ -17,7 +17,7 @@ embed_model = OpenAIEmbedding()
 Settings.embed_model = embed_model
 
 # Path to the podcast transcript file
-TRANSCRIPT_PATH = Path("../../data/raw/test.txt")
+TRANSCRIPT_PATH = Path("test.txt")
 
 def load_podcast_index():
     """Load and process podcast transcript data from text file"""
